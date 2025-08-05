@@ -1,7 +1,7 @@
-package com.peknight.os
+package com.peknight.os.signal
 
-import com.peknight.os.SignalAction.*
-import com.peknight.os.SignalStandard.*
+import com.peknight.os.signal.SignalAction.*
+import com.peknight.os.signal.SignalStandard.*
 
 enum Signal(val x86Arm: Option[Int], val alpha: Option[Int], val sparc: Option[Int], val mips: Option[Int],
             val parisc: Option[Int], val standard: Option[SignalStandard], val action: Option[SignalAction],

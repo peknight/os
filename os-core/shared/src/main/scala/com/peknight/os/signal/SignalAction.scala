@@ -1,4 +1,4 @@
-package com.peknight.os
+package com.peknight.os.signal
 
 enum SignalAction:
   case Core, Term, Ign, Cont, Stop
