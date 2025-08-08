@@ -53,6 +53,7 @@ lazy val osCore = (crossProject(JSPlatform, JVMPlatform) in file("os-core"))
     name := "os-core",
     libraryDependencies ++= Seq(
       "com.peknight" %%% "codec-core" % pekCodecVersion,
+      "org.typelevel" %%% "spire" % spireVersion,
     ),
   )
 
@@ -75,6 +76,7 @@ lazy val osParse = (crossProject(JSPlatform, JVMPlatform) in file("os-parse"))
     ),
   )
 
+val spireVersion = "0.18.0"
 val fs2Version = "3.12.0"
 val catsParseVersion = "0.3.10"
 val pekVersion = "0.1.0-SNAPSHOT"
