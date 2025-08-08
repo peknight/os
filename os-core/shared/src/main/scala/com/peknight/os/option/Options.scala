@@ -35,8 +35,8 @@ object Options:
     (a: A) => instances.foldRightWithLabel(a)(List.empty[(OptionKey, List[String])].pure[F]) {
       [X] => (encoder: Encoder[F, OptionArgs, X], x: X, label: String, acc: F[List[(OptionKey, List[String])]]) =>
         (encoder.encode(x), acc).mapN { (args, acc) =>
-          val key = config.transformOptionKey(label)
-          if key.argumentNumber === Interval.point(0) then
+          val key = config.transformMemberOptionKey(label)
+          if key.argumentNumber === Interval.point(0) || (x.isInstanceOf[Boolean] && config.booleanAsFlag && key.argumentNumber.contains(0)) then
             if args.flag then (key, Nil) :: acc
             else acc
           else
