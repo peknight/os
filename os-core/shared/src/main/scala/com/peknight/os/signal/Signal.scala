@@ -1,8 +1,10 @@
 package com.peknight.os.signal
 
-import cats.Applicative
+import cats.{Applicative, Show}
 import com.peknight.codec.Codec
+import com.peknight.codec.cursor.Cursor
 import com.peknight.codec.derivation.EnumCodecDerivation
+import com.peknight.codec.sum.{NullType, ObjectType, StringType}
 import com.peknight.os.signal.SignalAction.*
 import com.peknight.os.signal.SignalStandard.*
 
@@ -84,4 +86,6 @@ object Signal:
   given stringCodecSignal[F[_]: Applicative]: Codec[F, String, String, Signal] =
     import com.peknight.codec.config.given
     EnumCodecDerivation.unsafeDerivedStringCodecEnum[F, Signal]
+  given codecSignal[F[_]: Applicative, S: {ObjectType, NullType, StringType, Show}]: Codec[F, S, Cursor[S], Signal] =
+    Codec.codecS[F, S, Signal]
 end Signal
