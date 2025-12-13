@@ -1,5 +1,8 @@
 package com.peknight.os.signal
 
+import cats.Applicative
+import com.peknight.codec.Codec
+import com.peknight.codec.derivation.EnumCodecDerivation
 import com.peknight.os.signal.SignalAction.*
 import com.peknight.os.signal.SignalStandard.*
 
@@ -76,4 +79,9 @@ enum Signal(val x86Arm: Option[Int], val alpha: Option[Int], val sparc: Option[I
   case SIGSYS extends Signal(Some(31), Some(12), Some(12), Some(12), Some(31), Some(P2001), Some(Core),
     "Bad system call (SVr4); see also seccomp(2)")
   case SIGUNUSED extends Signal(Some(31), None, None, None, Some(31), None, Some(Core), "Synonymous with SIGSYS")
+end Signal
+object Signal:
+  given stringCodecSignal[F[_]: Applicative]: Codec[F, String, String, Signal] =
+    import com.peknight.codec.config.given
+    EnumCodecDerivation.unsafeDerivedStringCodecEnum[F, Signal]
 end Signal
