@@ -1,8 +1,5 @@
 package com.peknight.os
 
-import _root_.fs2.Compiler
-import _root_.fs2.io.process.Process
-import _root_.fs2.text.{lines, utf8}
 import cats.data.Ior
 import cats.effect.ExitCode
 import cats.syntax.eq.*
@@ -12,8 +9,11 @@ import cats.{Monad, MonadError}
 import com.peknight.error.syntax.applicativeError.asError
 import com.peknight.error.{Error, Success}
 import com.peknight.os.error.ProcessError
+import fs2.Compiler
+import fs2.io.process.Process
+import fs2.text.{lines, utf8}
 
-package object fs2:
+package object process:
   def processError[F[_]](process: Process[F])(using Monad[F], Compiler[F, F]): F[Error] =
     for
       exitValue <- process.exitValue
@@ -25,4 +25,4 @@ package object fs2:
 
   def isSuccess[F[_]](process: Process[F])(using MonadError[F, Throwable], Compiler[F, F]): F[Ior[Error, Boolean]] =
     processError[F](process).asError.map(_.fold(Ior.left, e => Ior.both(e, e.success)))
-end fs2
+end process
