@@ -12,6 +12,8 @@ object Group:
   case class GroupId(id: Int) extends Group
   case class GroupName(name: String) extends Group
 
+  def apply(value: String): Group = Try(GroupId(value.toInt)).getOrElse(GroupName(value))
+
   given stringCodecGroupId[F[_]: Applicative]: Codec[F, String, String, GroupId] =
     Codec.mapTry[F, String, String, GroupId](_.id.toString)(t => Try(GroupId(t.toInt)))
 
@@ -22,7 +24,7 @@ object Group:
     Codec.map[F, String, String, Group] {
       case GroupId(id) => id.toString
       case GroupName(name) => name
-    }(t => Try(GroupId(t.toInt)).getOrElse(GroupName(t)))
+    }(Group.apply)
 
   given codecGroupId[F[_]: Applicative, S: {StringType, Show}]: Codec[F, S, Cursor[S], GroupId] =
     Codec.codecS[F, S, GroupId]
