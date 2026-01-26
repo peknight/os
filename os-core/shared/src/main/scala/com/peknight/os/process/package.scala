@@ -19,9 +19,7 @@ package object process:
       exitValue <- process.exitValue
       messages <- process.stderr.through(utf8.decode[F]).through(fs2.text.lines[F]).compile.toList
     yield
-      val msgs = messages.filter(_.nonEmpty)
-      if ExitCode.Success.code === exitValue && msgs.isEmpty then Success
-      else ProcessError(exitValue, msgs)
+      ProcessError.from(exitValue, messages)
 
   def isSuccess[F[_]](process: Process[F])(using MonadError[F, Throwable], Compiler[F, F]): F[Ior[Error, Boolean]] =
     processError[F](process).asError.map(_.fold(Ior.left, e => Ior.both(e, e.success)))
@@ -30,11 +28,12 @@ package object process:
                  (using MonadError[F, Throwable], Compiler[F, F]): F[Ior[Error, String]] =
     val iorT: IorT[F, Error, String] =
       for
-        stream <- IorT(processError[F](process).asError.map(_.fold(Ior.left, e =>
-          if e.success then Ior.both(e, process.stdout) else Ior.left(e)
+        _ <- IorT(processError[F](process).asError.map(_.fold(Ior.left, e =>
+          if e.success then Ior.both(e, ()) else Ior.left(e)
         )))
-        values <- stream.through(decode).compile.toList.asIT
+        values <- process.stdout.through(decode).compile.toList.asIT
       yield
         values.mkString.trim
     iorT.value
+
 end process
