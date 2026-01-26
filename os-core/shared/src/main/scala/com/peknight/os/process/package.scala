@@ -1,13 +1,11 @@
 package com.peknight.os
 
 import cats.data.{Ior, IorT}
-import cats.effect.ExitCode
-import cats.syntax.eq.*
 import cats.syntax.flatMap.*
 import cats.syntax.functor.*
 import cats.{Monad, MonadError}
+import com.peknight.error.Error
 import com.peknight.error.syntax.applicativeError.{asError, asIT}
-import com.peknight.error.{Error, Success}
 import com.peknight.os.error.ProcessError
 import fs2.io.process.Process
 import fs2.text.utf8
