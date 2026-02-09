@@ -15,8 +15,12 @@ import scala.util.Try
 
 sealed trait User
 object User:
-  case class UserId(id: Int) extends User
-  case class UserName(name: String) extends User
+  case class UserId(id: Int) extends User:
+    override def toString: String = id.toString
+  end UserId
+  case class UserName(name: String) extends User:
+    override def toString: String = name
+  end UserName
 
   def apply(value: String): User = Try(UserId(value.toInt)).getOrElse(UserName(value))
 

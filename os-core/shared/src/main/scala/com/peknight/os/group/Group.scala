@@ -15,8 +15,12 @@ import scala.util.Try
 
 sealed trait Group
 object Group:
-  case class GroupId(id: Int) extends Group
-  case class GroupName(name: String) extends Group
+  case class GroupId(id: Int) extends Group:
+    override def toString: String = id.toString
+  end GroupId
+  case class GroupName(name: String) extends Group:
+    override def toString: String = name
+  end GroupName
 
   def apply(value: String): Group = Try(GroupId(value.toInt)).getOrElse(GroupName(value))
 
