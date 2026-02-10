@@ -14,8 +14,8 @@ import fs2.{Compiler, Pipe}
 package object process:
   def processError[F[_]](process: Process[F])(using Monad[F], Compiler[F, F]): F[Error] =
     for
-      exitValue <- process.exitValue
       messages <- process.stderr.through(utf8.decode[F]).through(fs2.text.lines[F]).compile.toList
+      exitValue <- process.exitValue
     yield
       ProcessError.from(exitValue, messages)
 
