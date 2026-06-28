@@ -3,23 +3,25 @@ import com.peknight.build.sbt.*
 
 commonSettings
 
+ThisBuild / scalacOptions --= Seq("-Werror")
+
 lazy val os = (project in file("."))
   .settings(name := "os")
-  .aggregate(
-    osCore.jvm,
-    osCore.js,
-    osParse.jvm,
-    osParse.js,
-  )
+  .aggregate(osCore.projectRefs *)
+  .aggregate(osParse.projectRefs *)
 
-lazy val osCore = (crossProject(JVMPlatform, JSPlatform) in file("os-core"))
+lazy val osCore = (projectMatrix in file("os-core"))
   .settings(name := "os-core")
-  .settings(crossDependencies(
+  .settings(libraryDependencies ++= dependencies(
     peknight.codec,
     fs2.io,
     typelevel.spire,
   ))
+  .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
+  .jsPlatform(scalaVersions = Seq(scala.scala3.version))
 
-lazy val osParse = (crossProject(JVMPlatform, JSPlatform) in file("os-parse"))
+lazy val osParse = (projectMatrix in file("os-parse"))
   .settings(name := "os-parse")
-  .settings(crossDependencies(typelevel.catsParse))
+  .settings(libraryDependencies ++= dependencies(typelevel.catsParse))
+  .jvmPlatform(scalaVersions = Seq(scala.scala3.version))
+  .jsPlatform(scalaVersions = Seq(scala.scala3.version))
